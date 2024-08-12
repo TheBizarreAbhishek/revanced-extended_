@@ -10,9 +10,8 @@ Get the [latest CI release](https://github.com/TheBizarreAbhishek/ReVanced-Exten
   
   ● Should not break safetynet or trigger root detections used by certain apps.
   
-  ● Supports Magisk and Kernel SU
+  ● Supports Magisk , Kernel SU and Apatch
   
-  ● Contain Patches from Three developers
 # Note
   ●Use [zygisk-detach](https://github.com/j-hc/zygisk-detach) to block Play Store from updating YouTube and YouTube-Music.
   
