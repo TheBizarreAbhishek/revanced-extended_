@@ -23,3 +23,13 @@ build-mode = "both"
 excluded-patches = "'Custom branding name YouTube'"
 included-patches = "'Visual preferences icons' 'Custom branding icon YouTube' 'Custom package name' 'MaterialYou'"
 apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/youtube"
+
+[Photos-ReVanced]
+app-name = "Photos"
+patches-source = "ReVanced/revanced-patches"
+cli-source = "ReVanced/revanced-cli"
+rv-brand = "ReVanced"
+build-mode = "both"
+excluded-patches = ""
+included-patches = ""
+apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/photos"
