@@ -42,6 +42,7 @@ get_rv_prebuilts() {
 	local cl_dir=${patches_src%/*}
 	cl_dir=${TEMP_DIR}/${cl_dir,,}-rv
 	[ -d "$cl_dir" ] || mkdir "$cl_dir"
+	: >"${cl_dir}/changelog.md"
 	for src_ver in "$cli_src CLI $cli_ver" "$integrations_src Integrations $integrations_ver" "$patches_src Patches $patches_ver"; do
 		set -- $src_ver
 		local src=$1 tag=$2 ver=${3-} ext
@@ -81,13 +82,13 @@ get_rv_prebuilts() {
 			name=$(jq -r .name <<<"$asset")
 			file="${dir}/${name}"
 			gh_dl "$file" "$url" >&2 || return 1
+			if [ "$tag" = "Integrations" ]; then integs_file=$file; fi
 		else
 			name=$(basename "$file")
 			tag_name=$(cut -d'-' -f3- <<<"$name")
 			tag_name=v${tag_name%.*}
 			if [ "$tag_name" = "v" ]; then abort; fi
 		fi
-		if [ "$tag" = "Integrations" ] && [ ! -f "$file" ]; then integs_file=$file; fi
 
 		echo "$tag: $(cut -d/ -f1 <<<"$src")/${name}  " >>"${cl_dir}/changelog.md"
 		echo -n "$file "
@@ -106,19 +107,19 @@ get_rv_prebuilts() {
 	echo
 
 	if [ "$integs_file" ]; then
-		{
+		if ! (
 			mkdir -p "${integs_file}-zip" || return 1
 			unzip -qo "${integs_file}" -d "${integs_file}-zip" || return 1
-			rm "${integs_file}" || return 1
 			cd "${integs_file}-zip" || return 1
 			java -cp "${BIN_DIR}/paccer.jar:${BIN_DIR}/dexlib2.jar" com.jhc.Main "${integs_file}-zip/classes.dex" "${integs_file}-zip/classes-patched.dex" || return 1
 			mv -f "${integs_file}-zip/classes-patched.dex" "${integs_file}-zip/classes.dex" || return 1
+			rm "${integs_file}" || return 1
 			zip -0rq "${integs_file}" . || return 1
-			rm -r "${integs_file}-zip"
-		} >&2 || {
+		) >&2; then
 			epr "Patching revanced-integrations failed"
-			return 1
-		}
+		fi
+		rm -r "${integs_file}-zip" || :
+
 	fi
 }
 
